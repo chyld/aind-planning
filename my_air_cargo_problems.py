@@ -162,9 +162,13 @@ class AirCargoProblem(Problem):
         :param action: Action applied
         :return: resulting state after action
         """
-        # TODO implement
-        new_state = FluentState([], [])
-        return encode_state(new_state, self.state_map)
+        kb = PropKB()
+        kb.tell(decode_state(state, self.state_map).sentence())
+        action(kb, action.args) 
+        pos = []; neg = []
+        for e in kb.clauses:
+            neg.append(e) if e.op == '~' else pos.append(e)
+        return encode_state(FluentState(pos, neg), self.state_map)
 
     # --------------------------------------------------------------------------------- #
     # --------------------------------------------------------------------------------- #
