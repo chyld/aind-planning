@@ -35,6 +35,10 @@ class AirCargoProblem(Problem):
         self.airports = airports
         self.actions_list = self.get_actions()
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def get_actions(self):
         """
         This method creates concrete actions (no variables) for all actions in the problem
@@ -48,32 +52,67 @@ class AirCargoProblem(Problem):
             list of Action objects
         """
 
-        # TODO create concrete Action objects based on the domain action schema for: Load, Unload, and Fly
-        # concrete actions definition: specific literal action that does not include variables as with the schema
-        # for example, the action schema 'Load(c, p, a)' can represent the concrete actions 'Load(C1, P1, SFO)'
-        # or 'Load(C2, P2, JFK)'.  The actions for the planning problem must be concrete because the problems in
-        # forward search and Planning Graphs must use Propositional Logic
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
         def load_actions():
             """Create all concrete Load actions and return a list
 
+            Action(Load(c, p, a),
+                PRECOND: At(c, a) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
+                EFFECT: ¬ At(c, a) ∧ In(c, p))
+
             :return: list of Action objects
             """
             loads = []
-            # TODO create all load ground actions from the domain Load action
+            for c in self.cargos:
+                for p in self.planes:
+                    for a in self.airports:
+                            precond_pos = [expr("At({}, {})".format(c, a)), expr("At({}, {})".format(p, a))]
+                            precond_neg = []
+                            effect_add = [expr("In({}, {})".format(c, p))]
+                            effect_rem = [expr("At({}, {})".format(c, a))]
+                            load = Action(expr("Load({}, {}, {})".format(c, p, a)),
+                                         [precond_pos, precond_neg],
+                                         [effect_add, effect_rem])
+                            loads.append(load)
             return loads
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
         def unload_actions():
             """Create all concrete Unload actions and return a list
 
+            Action(Unload(c, p, a),
+                PRECOND: In(c, p) ∧ At(p, a) ∧ Cargo(c) ∧ Plane(p) ∧ Airport(a)
+                EFFECT: At(c, a) ∧ ¬ In(c, p))
+
             :return: list of Action objects
             """
             unloads = []
-            # TODO create all Unload ground actions from the domain Unload action
+            for c in self.cargos:
+                for p in self.planes:
+                    for a in self.airports:
+                            precond_pos = [expr("In({}, {})".format(c, p)), expr("At({}, {})".format(p, a))]
+                            precond_neg = []
+                            effect_add = [expr("At({}, {})".format(c, a))]
+                            effect_rem = [expr("In({}, {})".format(c, p))]
+                            unload = Action(expr("Unload({}, {}, {})".format(c, p, a)),
+                                         [precond_pos, precond_neg],
+                                         [effect_add, effect_rem])
+                            unloads.append(unload)
             return unloads
+
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
+        # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ #
 
         def fly_actions():
             """Create all concrete Fly actions and return a list
+
+            Action(Fly(p, from, to),
+                PRECOND: At(p, from) ∧ Plane(p) ∧ Airport(from) ∧ Airport(to)
+                EFFECT: ¬ At(p, from) ∧ At(p, to))
 
             :return: list of Action objects
             """
@@ -82,8 +121,7 @@ class AirCargoProblem(Problem):
                 for to in self.airports:
                     if fr != to:
                         for p in self.planes:
-                            precond_pos = [expr("At({}, {})".format(p, fr)),
-                                           ]
+                            precond_pos = [expr("At({}, {})".format(p, fr))]
                             precond_neg = []
                             effect_add = [expr("At({}, {})".format(p, to))]
                             effect_rem = [expr("At({}, {})".format(p, fr))]
@@ -94,6 +132,10 @@ class AirCargoProblem(Problem):
             return flys
 
         return load_actions() + unload_actions() + fly_actions()
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def actions(self, state: str) -> list:
         """ Return the actions that can be executed in the given state.
@@ -107,6 +149,10 @@ class AirCargoProblem(Problem):
         possible_actions = []
         return possible_actions
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def result(self, state: str, action: Action):
         """ Return the state that results from executing the given
         action in the given state. The action must be one of
@@ -119,6 +165,10 @@ class AirCargoProblem(Problem):
         # TODO implement
         new_state = FluentState([], [])
         return encode_state(new_state, self.state_map)
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def goal_test(self, state: str) -> bool:
         """ Test the state to see if goal is reached
@@ -138,6 +188,10 @@ class AirCargoProblem(Problem):
         h_const = 1
         return h_const
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     @lru_cache(maxsize=8192)
     def h_pg_levelsum(self, node: Node):
         """This heuristic uses a planning graph representation of the problem
@@ -149,6 +203,10 @@ class AirCargoProblem(Problem):
         pg = PlanningGraph(self, node.state)
         pg_levelsum = pg.h_levelsum()
         return pg_levelsum
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     @lru_cache(maxsize=8192)
     def h_ignore_preconditions(self, node: Node):
