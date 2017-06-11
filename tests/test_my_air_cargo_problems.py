@@ -76,9 +76,9 @@ class TestAirCargoMethods(unittest.TestCase):
         self.assertTrue(expr('In(C1, P1)') in fs.pos)
         self.assertTrue(expr('At(C1, SFO)') in fs.neg)
 
-    # def test_h_ignore_preconditions(self):
-    #     n = Node(self.p1.initial)
-    #     self.assertEqual(self.p1.h_ignore_preconditions(n),2)
+    def test_h_ignore_preconditions(self):
+        n = Node(self.p1.initial)
+        self.assertEqual(self.p1.h_ignore_preconditions(n),2)
 
 if __name__ == '__main__':
     unittest.main()

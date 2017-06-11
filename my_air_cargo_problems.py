@@ -144,6 +144,11 @@ class AirCargoProblem(Problem):
             state represented as T/F string of mapped fluents (state variables)
             e.g. 'FTTTFF'
         :return: list of Action objects
+
+        I take the current state, kb, and then for each action, I ask the action
+        to check its precondition - based on the current state and the arguments
+        to the action. If the precondition check passes, then the action is added
+        to a list of possible actions that can be traversed from a node in the graph.
         """
         kb = PropKB()
         kb.tell(decode_state(state, self.state_map).sentence())
@@ -161,6 +166,13 @@ class AirCargoProblem(Problem):
         :param state: state entering node
         :param action: Action applied
         :return: resulting state after action
+
+        I take an action, and call it, passing in the current state
+        and its arguments. This causes kb.clauses to mutate from one
+        state to the next. I then traverse the updated kb.clauses. If
+        a clause has a "~" then I add it to the negative list, else I
+        add it to the positive list. I then turn these two lists into
+        an updated state and return.
         """
         kb = PropKB()
         kb.tell(decode_state(state, self.state_map).sentence())
@@ -192,7 +204,6 @@ class AirCargoProblem(Problem):
     # --------------------------------------------------------------------------------- #
 
     def h_1(self, node: Node):
-        # note that this is not a true heuristic
         h_const = 1
         return h_const
 
@@ -207,7 +218,6 @@ class AirCargoProblem(Problem):
         out from the current state in order to satisfy each individual goal
         condition.
         """
-        # requires implemented PlanningGraph class
         pg = PlanningGraph(self, node.state)
         pg_levelsum = pg.h_levelsum()
         return pg_levelsum
@@ -222,10 +232,27 @@ class AirCargoProblem(Problem):
         carried out from the current state in order to satisfy all of the goal
         conditions by ignoring the preconditions required for an action to be
         executed.
+
+        I count the number of uncompleted goals in the current state and return
+        that value to the caller. For example, if a state has three incomplete
+        goals, and if we assume one action will complete one goal, then
+        the cost - or the number of actions - required to move from this state
+        to the final state with all goals completed, is three.
+
+        - From page 376 in AIMA 3rd -
+        Every action becomes applicable in every state, and any single goal fluent
+        can be achieved in one step (if there is an applicable action—if not, the problem
+        is impossible). This almost implies that the number of steps required to solve
+        the relaxed problem is the number of unsatisfied goals—almost but not
+        quite, because (1) some action may achieve multiple goals and (2) some actions may undo
+        the effects of others. For many problems an accurate heuristic is obtained by considering (1)
+        and ignoring (2). First, we relax the actions by removing all preconditions and all effects
+        except those that are literals in the goal. Then, we count the minimum number of actions
+        required such that the union of those actions’ effects satisfies the goal.
         """
-        # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
-        count = 0
-        return count
+        kb = PropKB()
+        kb.tell(decode_state(node.state, self.state_map).sentence())
+        return len([g for g in self.goal if g not in kb.clauses])
 
     # --------------------------------------------------------------------------------- #
     # --------------------------------------------------------------------------------- #
