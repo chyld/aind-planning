@@ -3,7 +3,6 @@ from aimacode.search import Problem
 from aimacode.utils import expr
 from lp_utils import decode_state
 
-
 class PgNode():
     """Base class for planning graph nodes.
 
@@ -203,6 +202,10 @@ class PlanningGraph():
     graph can be used to reason about 
     """
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def __init__(self, problem: Problem, state: str, serial_planning=True):
         """
         :param problem: PlanningProblem (or subclass such as AirCargoProblem or HaveCakeProblem)
@@ -222,6 +225,10 @@ class PlanningGraph():
         self.s_levels = []
         self.a_levels = []
         self.create_graph()
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def noop_actions(self, literal_list):
         """create persistent action for each possible fluent
@@ -251,6 +258,10 @@ class PlanningGraph():
             act2 = Action(expr("Noop_neg({})".format(fluent)), ([], [fluent]), ([], [fluent]))
             action_list.append(act2)
         return action_list
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def create_graph(self):
         """ build a Planning Graph as described in Russell-Norvig 3rd Ed 10.3 or 2nd Ed 11.4
@@ -294,6 +305,10 @@ class PlanningGraph():
             if self.s_levels[level] == self.s_levels[level - 1]:
                 leveled = True
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def add_action_level(self, level):
         """ add an A (action) level to the Planning Graph
 
@@ -310,6 +325,10 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph
@@ -328,6 +347,10 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def update_a_mutex(self, nodeset):
         """ Determine and update sibling mutual exclusion for A-level nodes
@@ -353,6 +376,10 @@ class PlanningGraph():
                         self.competing_needs_mutex(n1, n2)):
                     mutexify(n1, n2)
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def serialize_actions(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
         Test a pair of actions for mutual exclusion, returning True if the
@@ -371,6 +398,10 @@ class PlanningGraph():
             return False
         return True
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def inconsistent_effects_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
         Test a pair of actions for inconsistent effects, returning True if
@@ -387,6 +418,10 @@ class PlanningGraph():
         """
         # TODO test for Inconsistent Effects between nodes
         return False
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
@@ -405,6 +440,10 @@ class PlanningGraph():
         # TODO test for Interference between nodes
         return False
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
         Test a pair of actions for mutual exclusion, returning True if one of
@@ -418,6 +457,10 @@ class PlanningGraph():
 
         # TODO test for Competing Needs between nodes
         return False
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def update_s_mutex(self, nodeset: set):
         """ Determine and update sibling mutual exclusion for S-level nodes
@@ -438,6 +481,10 @@ class PlanningGraph():
                 if self.negation_mutex(n1, n2) or self.inconsistent_support_mutex(n1, n2):
                     mutexify(n1, n2)
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def negation_mutex(self, node_s1: PgNode_s, node_s2: PgNode_s) -> bool:
         """
         Test a pair of state literals for mutual exclusion, returning True if
@@ -453,6 +500,10 @@ class PlanningGraph():
         """
         # TODO test for negation between nodes
         return False
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
 
     def inconsistent_support_mutex(self, node_s1: PgNode_s, node_s2: PgNode_s):
         """
@@ -473,6 +524,10 @@ class PlanningGraph():
         # TODO test for Inconsistent Support between nodes
         return False
 
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+
     def h_levelsum(self) -> int:
         """The sum of the level costs of the individual goals (admissible if goals independent)
 
@@ -482,3 +537,7 @@ class PlanningGraph():
         # TODO implement
         # for each goal in the problem, determine the level cost, then add them together
         return level_sum
+
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
+    # --------------------------------------------------------------------------------- #
