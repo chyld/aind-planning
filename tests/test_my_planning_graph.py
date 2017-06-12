@@ -31,38 +31,38 @@ class TestPlanningGraphLevels(unittest.TestCase):
         self.assertEqual(len(self.pg.s_levels[1]), 4, len(self.pg.s_levels[1]))
         self.assertEqual(len(self.pg.s_levels[2]), 4, len(self.pg.s_levels[2]))
 
-# class TestPlanningGraphMutex(unittest.TestCase):
-#     def setUp(self):
-#         self.p = have_cake()
-#         self.pg = PlanningGraph(self.p, self.p.initial)
-#         # some independent nodes for testing mutex
-#         self.na1 = PgNode_a(Action(expr('Go(here)'),
-#                                    [[], []], [[expr('At(here)')], []]))
-#         self.na2 = PgNode_a(Action(expr('Go(there)'),
-#                                    [[], []], [[expr('At(there)')], []]))
-#         self.na3 = PgNode_a(Action(expr('Noop(At(there))'),
-#                                    [[expr('At(there)')], []], [[expr('At(there)')], []]))
-#         self.na4 = PgNode_a(Action(expr('Noop(At(here))'),
-#                                    [[expr('At(here)')], []], [[expr('At(here)')], []]))
-#         self.na5 = PgNode_a(Action(expr('Reverse(At(here))'),
-#                                    [[expr('At(here)')], []], [[], [expr('At(here)')]]))
-#         self.ns1 = PgNode_s(expr('At(here)'), True)
-#         self.ns2 = PgNode_s(expr('At(there)'), True)
-#         self.ns3 = PgNode_s(expr('At(here)'), False)
-#         self.ns4 = PgNode_s(expr('At(there)'), False)
-#         self.na1.children.add(self.ns1)
-#         self.ns1.parents.add(self.na1)
-#         self.na2.children.add(self.ns2)
-#         self.ns2.parents.add(self.na2)
-#         self.na1.parents.add(self.ns3)
-#         self.na2.parents.add(self.ns4)
+class TestPlanningGraphMutex(unittest.TestCase):
+    def setUp(self):
+        self.p = have_cake()
+        self.pg = PlanningGraph(self.p, self.p.initial)
+        # some independent nodes for testing mutex
+        self.na1 = PgNode_a(Action(expr('Go(here)'),
+                                   [[], []], [[expr('At(here)')], []]))
+        self.na2 = PgNode_a(Action(expr('Go(there)'),
+                                   [[], []], [[expr('At(there)')], []]))
+        self.na3 = PgNode_a(Action(expr('Noop(At(there))'),
+                                   [[expr('At(there)')], []], [[expr('At(there)')], []]))
+        self.na4 = PgNode_a(Action(expr('Noop(At(here))'),
+                                   [[expr('At(here)')], []], [[expr('At(here)')], []]))
+        self.na5 = PgNode_a(Action(expr('Reverse(At(here))'),
+                                   [[expr('At(here)')], []], [[], [expr('At(here)')]]))
+        self.ns1 = PgNode_s(expr('At(here)'), True)
+        self.ns2 = PgNode_s(expr('At(there)'), True)
+        self.ns3 = PgNode_s(expr('At(here)'), False)
+        self.ns4 = PgNode_s(expr('At(there)'), False)
+        self.na1.children.add(self.ns1)
+        self.ns1.parents.add(self.na1)
+        self.na2.children.add(self.ns2)
+        self.ns2.parents.add(self.na2)
+        self.na1.parents.add(self.ns3)
+        self.na2.parents.add(self.ns4)
 
-#     def test_serialize_mutex(self):
-#         self.assertTrue(PlanningGraph.serialize_actions(self.pg, self.na1, self.na2),
-#                         "Two persistence action nodes not marked as mutex")
-#         self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na3, self.na4), "Two No-Ops were marked mutex")
-#         self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na1, self.na3),
-#                          "No-op and persistence action incorrectly marked as mutex")
+    def test_serialize_mutex(self):
+        self.assertTrue(PlanningGraph.serialize_actions(self.pg, self.na1, self.na2),
+                        "Two persistence action nodes not marked as mutex")
+        self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na3, self.na4), "Two No-Ops were marked mutex")
+        self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na1, self.na3),
+                         "No-op and persistence action incorrectly marked as mutex")
 
 #     def test_inconsistent_effects_mutex(self):
 #         self.assertTrue(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na4, self.na5),
