@@ -473,7 +473,16 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Interference between nodes
+        for s1 in node_a1.prenodes:
+            for s2 in node_a2.effnodes:
+                if s1.symbol == s2.symbol and s1.is_pos != s2.is_pos:
+                    return True
+
+        for s1 in node_a1.effnodes:
+            for s2 in node_a2.prenodes:
+                if s1.symbol == s2.symbol and s1.is_pos != s2.is_pos:
+                    return True
+
         return False
 
     # --------------------------------------------------------------------------------- #
