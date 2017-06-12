@@ -78,12 +78,12 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertFalse(PlanningGraph.interference_mutex(self.pg, self.na1, self.na2),
                          "Non-interfering incorrectly marked mutex")
 
-#     def test_competing_needs_mutex(self):
-#         self.assertFalse(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
-#                          "Non-competing action nodes incorrectly marked as mutex")
-#         mutexify(self.ns3, self.ns4)
-#         self.assertTrue(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
-#                         "Opposite preconditions from two action nodes not marked as mutex")
+    def test_competing_needs_mutex(self):
+        self.assertFalse(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
+                         "Non-competing action nodes incorrectly marked as mutex")
+        mutexify(self.ns3, self.ns4)
+        self.assertTrue(PlanningGraph.competing_needs_mutex(self.pg, self.na1, self.na2),
+                        "Opposite preconditions from two action nodes not marked as mutex")
 
 #     def test_negation_mutex(self):
 #         self.assertTrue(PlanningGraph.negation_mutex(self.pg, self.ns1, self.ns3),
