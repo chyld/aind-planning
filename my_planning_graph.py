@@ -583,8 +583,11 @@ class PlanningGraph():
         :return: int
         """
         level_sum = 0
-        # TODO implement
-        # for each goal in the problem, determine the level cost, then add them together
+        goals = set(map(lambda g: PgNode_s(g, True), self.problem.goal))
+        for i, level in enumerate(self.s_levels):
+            satisfied = goals & level
+            goals = goals - satisfied
+            level_sum += i * len(satisfied)
         return level_sum
 
     # --------------------------------------------------------------------------------- #
