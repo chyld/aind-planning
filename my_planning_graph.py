@@ -337,7 +337,6 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
-
         self.a_levels.append(set())
 
         parent_level = self.s_levels[level]
@@ -372,7 +371,6 @@ class PlanningGraph():
         #   may be "added" to the set without fear of duplication.  However, it is important to then correctly create and connect
         #   all of the new S nodes as children of all the A nodes that could produce them, and likewise add the A nodes to the
         #   parent sets of the S nodes
-
         self.s_levels.append(set())
 
         parent_level = self.a_levels[level - 1]
@@ -427,7 +425,6 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        #
         if not self.serial:
             return False
         if node_a1.is_persistent or node_a2.is_persistent:
@@ -452,7 +449,10 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        # TODO test for Inconsistent Effects between nodes
+        for s1 in node_a1.effnodes:
+            for s2 in node_a2.effnodes:
+                if s1.symbol == s2.symbol and s1.is_pos != s2.is_pos:
+                    return True
         return False
 
     # --------------------------------------------------------------------------------- #

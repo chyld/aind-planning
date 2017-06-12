@@ -64,11 +64,11 @@ class TestPlanningGraphMutex(unittest.TestCase):
         self.assertFalse(PlanningGraph.serialize_actions(self.pg, self.na1, self.na3),
                          "No-op and persistence action incorrectly marked as mutex")
 
-#     def test_inconsistent_effects_mutex(self):
-#         self.assertTrue(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na4, self.na5),
-#                         "Canceling effects not marked as mutex")
-#         self.assertFalse(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na1, self.na2),
-#                          "Non-Canceling effects incorrectly marked as mutex")
+    def test_inconsistent_effects_mutex(self):
+        self.assertTrue(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na4, self.na5),
+                        "Canceling effects not marked as mutex")
+        self.assertFalse(PlanningGraph.inconsistent_effects_mutex(self.pg, self.na1, self.na2),
+                         "Non-Canceling effects incorrectly marked as mutex")
 
 #     def test_interference_mutex(self):
 #         self.assertTrue(PlanningGraph.interference_mutex(self.pg, self.na4, self.na5),
