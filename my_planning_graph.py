@@ -499,9 +499,9 @@ class PlanningGraph():
         :param node_a2: PgNode_a
         :return: bool
         """
-        for a1 in node_a1.parents:
-            for a2 in node_a2.parents:
-                if a1.is_mutex(a2):
+        for s1 in node_a1.parents:
+            for s2 in node_a2.parents:
+                if s1.is_mutex(s2):
                     return True
         return False
 
